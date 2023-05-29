@@ -23,7 +23,7 @@ class FlutterWebScrollBar {
     final MethodChannel channel = MethodChannel(
         'plugins.flutter.io/flutter_web_scrollbar',
         const StandardMethodCodec(),
-        registrar.messenger);
+        registrar);
     final FlutterWebScrollBar instance = FlutterWebScrollBar();
     channel.setMethodCallHandler(instance.handleMethodCall);
   }
@@ -51,15 +51,14 @@ class FlutterWebScrollBar {
       default:
         throw PlatformException(
             code: 'Unimplemented',
-            details: "The flutter_web_scrollbar plugin for web doesn't implement "
+            details:
+                "The flutter_web_scrollbar plugin for web doesn't implement "
                 "the method '${call.method}'");
     }
   }
 }
 
-
 class FlutterWebScroller extends StatefulWidget {
-
   /// Required! CallBack function used to update the scrollable content with the new drag position
   final Function scrollCallBack;
 
@@ -103,41 +102,41 @@ class _FlutterWebScrollerState extends State<FlutterWebScroller> {
   Widget build(BuildContext context) {
     return //Scroll bar
         Container(
-            alignment: Alignment.centerRight,
-            height: MediaQuery.of(context).size.height,
-            width: widget.scrollBarWidth,
-            margin: EdgeInsets.only(
-                left:
-                    MediaQuery.of(context).size.width - widget.scrollBarWidth),
-            decoration: BoxDecoration(color: widget.scrollBarBackgroundColor),
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: GestureDetector(
-                child: Container(
-                  height: widget.dragHandleHeight,
-                  width: widget.dragHandleWidth,
-                  margin: EdgeInsets.only(left: 5.0, right: 5.0, top: _offset),
-                  decoration: BoxDecoration(
-                      color: widget.dragHandleColor,
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(widget.dragHandleBorderRadius))),
-                ),
-                onVerticalDragUpdate: (dragUpdate) {
-                  /// Send the new drag details to the callback in order to properly update the scrollable content position
-                  widget.scrollCallBack(dragUpdate);
+      alignment: Alignment.centerRight,
+      height: MediaQuery.of(context).size.height,
+      width: widget.scrollBarWidth,
+      margin: EdgeInsets.only(
+          left: MediaQuery.of(context).size.width - widget.scrollBarWidth),
+      decoration: BoxDecoration(color: widget.scrollBarBackgroundColor),
+      child: Container(
+        alignment: Alignment.topCenter,
+        child: GestureDetector(
+          child: Container(
+            height: widget.dragHandleHeight,
+            width: widget.dragHandleWidth,
+            margin: EdgeInsets.only(left: 5.0, right: 5.0, top: _offset),
+            decoration: BoxDecoration(
+                color: widget.dragHandleColor,
+                borderRadius: BorderRadius.all(
+                    Radius.circular(widget.dragHandleBorderRadius))),
+          ),
+          onVerticalDragUpdate: (dragUpdate) {
+            /// Send the new drag details to the callback in order to properly update the scrollable content position
+            widget.scrollCallBack(dragUpdate);
 
-                  setState(() {
-                    if (dragUpdate.globalPosition.dy >= 0) {
-                      /// Update the offset of the drag handle to push it down or shift it up
-                      _offset = dragUpdate.globalPosition.dy;
+            setState(() {
+              if (dragUpdate.globalPosition.dy >= 0) {
+                /// Update the offset of the drag handle to push it down or shift it up
+                _offset = dragUpdate.globalPosition.dy;
 
-
-                      double maxHeight = MediaQuery.of(context).size.height - widget.dragHandleHeight;
-                      _offset =(_offset>maxHeight) ? maxHeight : _offset;
-                    }
-                  });
-                },
-              ),
-            ));
+                double maxHeight = MediaQuery.of(context).size.height -
+                    widget.dragHandleHeight;
+                _offset = (_offset > maxHeight) ? maxHeight : _offset;
+              }
+            });
+          },
+        ),
+      ),
+    );
   }
 }
